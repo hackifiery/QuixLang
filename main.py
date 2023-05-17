@@ -40,6 +40,23 @@ class Interpreter:
             expression = ' '.join(tokens[1:])
             result = self.evaluate_expression(expression)
             print(result)
+        elif tokens[0] == 'if':
+            condition = self.evaluate_expression(tokens[1])
+            if condition:
+                self.eval(' '.join(tokens[2:]))
+        elif tokens[0] == 'while':
+            condition = self.evaluate_expression(tokens[1])
+            while condition:
+                self.eval(' '.join(tokens[2:]))
+                condition = self.evaluate_expression(tokens[1])
+        elif tokens[0] == 'for':
+            variable = tokens[1]
+            start = int(tokens[3])
+            end = int(tokens[5])
+            step = int(tokens[7])
+            for i in range(start, end, step):
+                self.variables[variable] = i
+                self.eval(' '.join(tokens[8:]))
         else:
             raise Exception("Invalid command.")
 
