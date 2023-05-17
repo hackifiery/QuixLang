@@ -34,14 +34,17 @@
       const output = document.getElementById("output");
       const code = codeInput.value;
       
-      const lines = code.split('\n').map(line => line.trim()).filter(line => line !== '');
+      const statements = code.split(';');
       const results = [];
       
       try {
         const interpreter = new Interpreter();
         
-        for (const line of lines) {
-          const result = interpreter.eval(line);
+        for (const statement of statements) {
+          const trimmedStatement = statement.trim();
+          if (trimmedStatement === '') continue;
+          
+          const result = interpreter.eval(trimmedStatement);
           results.push(String(result));
         }
         
@@ -85,6 +88,26 @@
           }
           
           return output.join(' ');
+        } else if (tokens[0] === 'if') {
+          const condition = this.evaluateExpression(tokens[1]);
+          if (condition) {
+            this.eval(tokens.slice(2).join(' '));
+          }
+        } else if (tokens[0] === 'while') {
+          const condition = this.evaluateExpression(tokens[1]);
+          while (condition) {
+            this.eval(tokens.slice(2).join(' '));
+            condition = this.evaluateExpression(tokens[1]); // Evaluate the condition again
+          }
+        } else if (tokens[0] === 'for') {
+          const variable = tokens[1];
+          const start = parseInt(tokens[3]);
+          const end = parseInt(tokens[5]);
+          const step = parseInt(tokens[7]);
+          for (let i = start; i < end; i += step) {
+            this.variables[variable] = i;
+            this.eval(tokens.slice(8).join(' '));
+          }
         } else {
           throw new Error("Invalid command.");
         }
