@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Python Shell</title>
+  <style>
+    #input {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    #output {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      background-color: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Python Shell</h1>
+  <textarea id="input" rows="4" placeholder="Enter Python code"></textarea>
+  <button onclick="executeCode()">Run</button>
+  <pre id="output"></pre>
+  
+  <script>
+    function executeCode() {
+      const codeInput = document.getElementById("input");
+      const output = document.getElementById("output");
+      const code = codeInput.value;
+      
+      try {
+        // Evaluate the code using the Interpreter class
+        const interpreter = new Interpreter();
+        const result = interpreter.eval(code);
+        output.textContent = String(result);
+      } catch (error) {
+        output.textContent = "Error: " + String(error);
+      }
+      
+      // Clear the input field
+      codeInput.value = "";
+    }
+    
+    // Define the Interpreter class
+    class Interpreter {
+      constructor() {
+        this.variables = {};
+      }
+
+      eval(code) {
+        const tokens = code.split(/\s+/);
+        
+        if (tokens[0] === 'set') {
+          const variable = tokens[1];
+          const expression = tokens.slice(2).join(' ');
+          const result = this.evaluateExpression(expression);
+          this.variables[variable] = result;
+        } else if (tokens[0] === 'get') {
+          const variable = tokens[1];
+          if (variable in this.variables) {
+            return this.variables[variable];
+          } else {
+            throw new Error(`Variable '${variable}' not found.`);
+          }
+        } else if (tokens[0] === 'display') {
+          const output = [];
+          
+          for (const token of tokens.slice(1)) {
+            if (token in this.variables) {
+              output.push(this.variables[token]);
+            } else {
+              output.push(token);
+            }
+          }
+          
+          return output.join(' ');
+        } else {
+          throw new Error("Invalid command.");
+        }
+      }
+
+      evaluateExpression(expression) {
+        const evalExpression = expression.replace(/\b\w+\b/g, match => {
+          const variable = this.variables[match];
+          return variable !== undefined ? variable : match;
+        });
+        
+        return eval(evalExpression);
+      }
+    }
+  </script>
+</body>
+</html>
