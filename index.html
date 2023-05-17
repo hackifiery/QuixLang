@@ -34,15 +34,13 @@
       const output = document.getElementById("output");
       const code = codeInput.value;
       
-      const lines = code.split('\n');
+      const lines = code.split('\n').map(line => line.trim()).filter(line => line !== '');
       const results = [];
       
       try {
         const interpreter = new Interpreter();
         
         for (const line of lines) {
-          if (line.trim() === '') continue;
-          
           const result = interpreter.eval(line);
           results.push(String(result));
         }
@@ -55,7 +53,6 @@
       codeInput.value = "";
     }
     
-    // Define the Interpreter class
     class Interpreter {
       constructor() {
         this.variables = {};
