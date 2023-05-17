@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AILang shell</title>
+  <title>AILang Shell</title>
   <style>
     #input {
       width: 100%;
+      height: 200px;
       padding: 10px;
       box-sizing: border-box;
     }
@@ -23,7 +24,7 @@
 </head>
 <body>
   <h1>AILang Shell</h1>
-  <textarea id="input" rows="4" placeholder="Enter Python code"></textarea>
+  <textarea id="input" placeholder="Enter Python code"></textarea>
   <button onclick="executeCode()">Run</button>
   <pre id="output"></pre>
   
@@ -33,16 +34,24 @@
       const output = document.getElementById("output");
       const code = codeInput.value;
       
+      const lines = code.split('\n');
+      const results = [];
+      
       try {
-        // Evaluate the code using the Interpreter class
         const interpreter = new Interpreter();
-        const result = interpreter.eval(code);
-        output.textContent = String(result);
+        
+        for (const line of lines) {
+          if (line.trim() === '') continue;
+          
+          const result = interpreter.eval(line);
+          results.push(String(result));
+        }
+        
+        output.textContent = results.join('\n');
       } catch (error) {
         output.textContent = "Error: " + String(error);
       }
       
-      // Clear the input field
       codeInput.value = "";
     }
     
