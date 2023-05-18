@@ -32,19 +32,18 @@
     function executeCode() {
       const codeInput = document.getElementById("input");
       const output = document.getElementById("output");
-      const code = codeInput.value;
+      const code = codeInput.value.trim();
       
-      const statements = code.split(';');
+      if (code === '') return;
+      
+      const lines = code.split('\n');
       const results = [];
       
       try {
         const interpreter = new Interpreter();
         
-        for (const statement of statements) {
-          const trimmedStatement = statement.trim();
-          if (trimmedStatement === '') continue;
-          
-          const result = interpreter.eval(trimmedStatement);
+        for (const line of lines) {
+          const result = interpreter.eval(line);
           results.push(String(result));
         }
         
@@ -52,10 +51,9 @@
       } catch (error) {
         output.textContent = "Error: " + String(error);
       }
-      
-      codeInput.value = "";
     }
     
+    // Define the Interpreter class
     class Interpreter {
       constructor() {
         this.variables = {};
@@ -91,13 +89,13 @@
         } else if (tokens[0] === 'if') {
           const condition = this.evaluateExpression(tokens[1]);
           if (condition) {
-            this.eval(tokens.slice(2).join(' '));
+            return this.eval(tokens.slice(2).join(' '));
           }
         } else if (tokens[0] === 'while') {
           const condition = this.evaluateExpression(tokens[1]);
           while (condition) {
             this.eval(tokens.slice(2).join(' '));
-            break;
+            condition = this.evaluateExpression(tokens[1]);
           }
         } else if (tokens[0] === 'for') {
           const variable = tokens[1];
@@ -110,8 +108,7 @@
           }
         } else if (tokens[0] === 'solve') {
           const expression = tokens.slice(1).join(' ');
-          const result = this.evaluateExpression(expression);
-          return result;
+          return this.evaluateExpression(expression);
         } else {
           throw new Error("Invalid command.");
         }
