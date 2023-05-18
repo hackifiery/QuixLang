@@ -89,12 +89,14 @@
         } else if (tokens[0] === 'if') {
           const condition = this.evaluateExpression(tokens[1]);
           if (condition) {
-            return this.eval(tokens.slice(2).join(' '));
+            const block = code.slice(code.indexOf(tokens[3]));
+            return this.eval(block);
           }
         } else if (tokens[0] === 'while') {
           const condition = this.evaluateExpression(tokens[1]);
           while (condition) {
-            this.eval(tokens.slice(2).join(' '));
+            const block = code.slice(code.indexOf(tokens[3]));
+            this.eval(block);
             condition = this.evaluateExpression(tokens[1]);
           }
         } else if (tokens[0] === 'for') {
@@ -104,11 +106,13 @@
           const step = parseInt(tokens[7]);
           for (let i = start; i < end; i += step) {
             this.variables[variable] = i;
-            this.eval(tokens.slice(8).join(' '));
+            const block = code.slice(code.indexOf(tokens[9]));
+            this.eval(block);
           }
         } else if (tokens[0] === 'solve') {
           const expression = tokens.slice(1).join(' ');
-          return this.evaluateExpression(expression);
+          const result = this.evaluateExpression(expression);
+          return result;
         } else {
           throw new Error("Invalid command.");
         }
