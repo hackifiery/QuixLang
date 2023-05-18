@@ -66,14 +66,15 @@ class Interpreter:
         # Evaluate the expression using eval
         return eval(expression, {}, self.variables)
 
-# Interactive shell
-interpreter = Interpreter()
+def shell():    
+    # Interactive shell
+    interpreter = Interpreter()
 
-while True:
-    user_input = input(">>> ")
-    if user_input == 'exit':
-        break
-    try:
-        interpreter.eval(user_input)
-    except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
+    while True:
+        user_input = input(">>> ")
+        if user_input == 'exit':
+            break
+        try:
+            interpreter.eval(user_input)
+        except Exception as e:
+            print(f"Error: {str(e)}", file=sys.stderr)
