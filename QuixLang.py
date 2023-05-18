@@ -36,14 +36,20 @@ class Interpreter:
                             print(f"{token} = {result}")
                         except:
                             print(f"Variable '{token}' not found.", file=sys.stderr)
+        elif tokens[0] == 'solve':
+            expression = ' '.join(tokens[1:])
+            result = self.evaluate_expression(expression)
+            print(result)
         elif tokens[0] == 'if':
             condition = self.evaluate_expression(tokens[1])
             if condition:
-                self.eval(' '.join(tokens[2:]))
+                block = code[code.index(tokens[3]):]
+                self.eval(block)
         elif tokens[0] == 'while':
             condition = self.evaluate_expression(tokens[1])
             while condition:
-                self.eval(' '.join(tokens[2:]))
+                block = code[code.index(tokens[3]):]
+                self.eval(block)
                 condition = self.evaluate_expression(tokens[1])
         elif tokens[0] == 'for':
             variable = tokens[1]
@@ -52,11 +58,8 @@ class Interpreter:
             step = int(tokens[7])
             for i in range(start, end, step):
                 self.variables[variable] = i
-                self.eval(' '.join(tokens[8:]))
-        elif tokens[0] == 'solve':
-            expression = ' '.join(tokens[1:])
-            result = self.evaluate_expression(expression)
-            print(result)
+                block = code[code.index(tokens[9]):]
+                self.eval(block)
         else:
             raise Exception("Invalid command.")
 
@@ -66,15 +69,14 @@ class Interpreter:
         # Evaluate the expression using eval
         return eval(expression, {}, self.variables)
 
-def shell():    
-    # Interactive shell
-    interpreter = Interpreter()
+# Interactive shell
+interpreter = Interpreter()
 
-    while True:
-        user_input = input(">>> ")
-        if user_input == 'exit':
-            break
-        try:
-            interpreter.eval(user_input)
-        except Exception as e:
-            print(f"Error: {str(e)}", file=sys.stderr)
+while True:
+    user_input = input(">>> ")
+    if user_input == 'exit':
+        break
+    try:
+        interpreter.eval(user_input)
+    except Exception as e:
+        print(f"Error: {str(e)}", file=sys.stderr)
