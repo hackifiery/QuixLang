@@ -19,7 +19,7 @@ class Interpreter:
             else:
                 raise Exception(f"Variable '{variable}' not found.")
         elif tokens[0] == 'display':
-            if len(tokens) >= 2 and (tokens[1].startswith('"') and tokens[-1].endswith('"')) or (tokens[1].startswith("'") and tokens[-1].endswith("'")):
+            if len(tokens) >= 2 and ((tokens[1].startswith('"') and tokens[-1].endswith('"')) or (tokens[1].startswith("'") and tokens[-1].endswith("'"))):
                 output = ' '.join(tokens[1:])[1:-1]
                 print(output)
             else:
@@ -36,10 +36,6 @@ class Interpreter:
                             print(f"{token} = {result}")
                         except:
                             print(f"Variable '{token}' not found.", file=sys.stderr)
-        elif tokens[0] == 'solve':
-            expression = ' '.join(tokens[1:])
-            result = self.evaluate_expression(expression)
-            print(result)
         elif tokens[0] == 'if':
             condition = self.evaluate_expression(tokens[1])
             if condition:
@@ -57,6 +53,10 @@ class Interpreter:
             for i in range(start, end, step):
                 self.variables[variable] = i
                 self.eval(' '.join(tokens[8:]))
+        elif tokens[0] == 'solve':
+            expression = ' '.join(tokens[1:])
+            result = self.evaluate_expression(expression)
+            print(result)
         else:
             raise Exception("Invalid command.")
 
