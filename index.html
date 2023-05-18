@@ -97,7 +97,7 @@
           const condition = this.evaluateExpression(tokens[1]);
           while (condition) {
             this.eval(tokens.slice(2).join(' '));
-            condition = this.evaluateExpression(tokens[1]); // Evaluate the condition again
+            break;
           }
         } else if (tokens[0] === 'for') {
           const variable = tokens[1];
@@ -108,6 +108,10 @@
             this.variables[variable] = i;
             this.eval(tokens.slice(8).join(' '));
           }
+        } else if (tokens[0] === 'solve') {
+          const expression = tokens.slice(1).join(' ');
+          const result = this.evaluateExpression(expression);
+          return result;
         } else {
           throw new Error("Invalid command.");
         }
